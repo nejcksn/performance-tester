@@ -18,10 +18,10 @@ class ProductFactory extends Factory
      */
     protected $model = Product::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
-            'category_id' => Category::factory(),
+            'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory()->create()->id,
             'name' => $this->faker->word(),
             'price' => $this->faker->randomFloat(2, 5, 200),
         ];

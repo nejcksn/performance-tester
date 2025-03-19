@@ -19,15 +19,15 @@ class OrderFactory extends Factory
      */
     protected $model = Order::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
-            'user_id' => User::factory(),
-            'total_price' => $this->faker->randomFloat(2, 10, 500), // Цена от 10 до 500
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'total_price' => $this->faker->randomFloat(2, 10, 500),
         ];
     }
 
-    public function configure() 
+    public function configure()
     {
         return $this->afterCreating(function (Order $order) {
             // Выбираем случайные продукты

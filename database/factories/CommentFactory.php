@@ -19,11 +19,11 @@ class CommentFactory extends Factory
      */
     protected $model = Comment::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
-            'post_id' => Post::factory(),
-            'user_id' => User::factory(),
+            'post_id' => Post::inRandomOrder()->first()->id ?? Post::factory()->create()->id,
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'content' => $this->faker->paragraph(),
         ];
     }

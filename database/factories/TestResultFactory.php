@@ -18,10 +18,10 @@ class TestResultFactory extends Factory
      */
     protected $model = TestResult::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
-            'test_case_id' => TestCase::factory(),
+            'test_case_id' => TestCase::inRandomOrder()->first()->id ?? TestCase::factory()->create()->id,
             'execution_time' => $this->faker->randomFloat(6, 0.001, 10), // Время от 1 мс до 10 секунд
             'record_count' => $this->faker->numberBetween(1, 1000),
         ];

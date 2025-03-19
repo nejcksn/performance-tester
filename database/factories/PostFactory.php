@@ -18,10 +18,10 @@ class PostFactory extends Factory
      */
     protected $model = Post::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
-            'user_id' => User::factory(), // Генерация пользователя
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id, // Генерация пользователя
             'title' => $this->faker->sentence(),
             'content' => $this->faker->paragraph(10),
         ];
