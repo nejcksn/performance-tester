@@ -43,23 +43,28 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function posts() 
+    public function posts()
     {
         return $this->hasMany(Post::class);
     }
 
-    public function comments() 
+    public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function orders() 
+    public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
-    public function logs() 
+    public function logs()
     {
         return $this->hasMany(Log::class);
+    }
+
+    public function scopeFaker($query)
+    {
+        return $query->where('is_faker', 1);
     }
 }

@@ -11,7 +11,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
-        'name', 
+        'name',
         'price'
     ];
 
@@ -25,5 +25,10 @@ class Product extends Model
         return $this->belongsToMany(Order::class, 'order_product')
                     ->withPivot('quantity')
                     ->withTimestamps();
+    }
+
+    public function scopeFaker($query)
+    {
+        return $query->where('is_faker', 1);
     }
 }
