@@ -17,10 +17,11 @@ class CategoryFactory extends Factory
      */
     protected $model = Category::class;
 
-    public function definition() 
+    public function definition()
     {
         return [
             'name' => $this->faker->unique()->word(),
+            'is_faker' => 1,
         ];
     }
 }

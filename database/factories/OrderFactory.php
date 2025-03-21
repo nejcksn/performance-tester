@@ -24,6 +24,7 @@ class OrderFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'total_price' => $this->faker->randomFloat(2, 10, 500),
+            'is_faker' => 1,
         ];
     }
 

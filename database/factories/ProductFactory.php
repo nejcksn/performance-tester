@@ -24,6 +24,7 @@ class ProductFactory extends Factory
             'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory()->create()->id,
             'name' => $this->faker->word(),
             'price' => $this->faker->randomFloat(2, 5, 200),
+            'is_faker' => 1,
         ];
     }
 }
