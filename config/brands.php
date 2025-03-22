@@ -505,12 +505,6 @@ return [
         'country' => '',
         'founded_year' => null,
     ],
-    'nvidia' => [
-        'name' => '',
-        'description' => '',
-        'country' => 'USA',
-        'founded_year' => 1993
-    ],
     'nzxt' => [
         'name' => 'NZXT',
         'description' => 'NZXT is a popular brand known for its stylish and functional gaming PC cases, cooling solutions, and peripherals, focusing on providing gamers with visually appealing and high-performance products.',
