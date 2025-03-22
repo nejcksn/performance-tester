@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'category_id',
-        'name',
-        'price'
-    ];
+    protected $fillable = ['name', 'slug', 'category_id', 'price', 'image_url', 'is_faker'];
 
-    public function category()
-    {
+    public function category() {
         return $this->belongsTo(Category::class);
+    }
+
+    public function specs() {
+        return $this->hasMany(ProductSpec::class);
     }
 
     public function orders()
@@ -27,8 +27,25 @@ class Product extends Model
                     ->withTimestamps();
     }
 
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
     public function scopeFaker($query)
     {
         return $query->where('is_faker', 1);
+    }
+
+    public function generateSlug()
+    {
+        if(!trim($this->name)) $this->slug = 'product-' . $this->id;
+        else {
+            $this->slug = Str::slug($this->name);
+            $i = 1;
+            while(static::where('slug', $this->slug)->where('id', '<>', $this->id)->exists())
+                $this->slug = Str::slug($this->name).'-'.(++$i);
+        }
+        $this->save();
     }
 }

@@ -25,11 +25,7 @@ return new class extends Migration
         });
 
         Schema::table('products', function (Blueprint $table) {
-            $table->boolean('is_faker')->after('category_id')->default(0);
-        });
-
-        Schema::table('orders', function (Blueprint $table) {
-            $table->boolean('is_faker')->after('total_price')->default(0);
+            $table->boolean('img_url')->after('image')->default(0);
         });
     }
 
@@ -52,10 +48,6 @@ return new class extends Migration
         });
 
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('is_faker');
-        });
-
-        Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn('is_faker');
         });
     }

@@ -6,25 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Category extends Model
+class Brand extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'description'];
 
     public function products()
     {
-        return $this->hasMany(Product::class);
-    }
-
-    public function scopeFaker($query)
-    {
-        return $query->where('is_faker', 1);
+        return $this->hasMany(Product::class, 'brand_id');
     }
 
     public function generateSlug()
     {
-        if(!trim($this->name)) $this->slug = 'category-' . $this->id;
+        if(!trim($this->name)) $this->slug = 'brand-' . $this->id;
         else {
             $this->slug = Str::slug($this->name);
             $i = 1;
