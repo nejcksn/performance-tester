@@ -186,4 +186,11 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'social' => [
+        'telegram' => 'https://t.me/nejcksn',
+        'github' => 'https://github.com/nejcksn',
+        'instagram' => 'https://www.instagram.com/nejcksn/',
+        'vk' => 'https://vk.com/nejcksn',
+    ],
+
 ];
