@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PerformanceTestController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\TestCaseController;
+use App\Http\Controllers\Admin\TestResultController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\LogController;
-use App\Http\Controllers\TestCaseController;
-use App\Http\Controllers\TestResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +36,10 @@ Route::apiResource('logs', LogController::class);
 Route::apiResource('test-cases', TestCaseController::class);
 Route::apiResource('test-results', TestResultController::class);
 
+Route::prefix('test')->group(function () {
+    Route::post('/read', [PerformanceTestController::class, 'testRead']);
+    Route::post('/create', [PerformanceTestController::class, 'testCreate']);
+    Route::post('/update', [PerformanceTestController::class, 'testUpdate']);
+    Route::post('/delete', [PerformanceTestController::class, 'testDelete']);
+});
 
