@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TestResult extends Model
+class TestExecution extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['test_case_id', 'min_time', 'avg_time', 'max_time', 'record_count', 'test_count'];
+    protected $fillable = ['test_case_id', 'execution_time', 'record_count'];
 
     public function testCase()
     {

@@ -9,12 +9,13 @@ class TestCase extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name', 
-        'description'
-    ];
+    protected $fillable = ['name', 'description'];
 
-    public function testResults() 
+    public function testExecutions() {
+        return $this->hasMany(TestExecution::class);
+    }
+
+    public function testResults()
     {
         return $this->hasMany(TestResult::class);
     }
