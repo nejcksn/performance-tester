@@ -4,14 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles, HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = ['name', 'surname', 'slug', 'email', 'password',];
 
@@ -25,30 +27,47 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function posts()
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->slug = $user->generateSlug();
+        });
+
+        static::updating(function ($user) {
+            if ($user->isDirty(['name', 'surname'])) {
+                $user->slug = $user->generateSlug();
+            }
+        });
+    }
+
+    public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
-    public function cart() {
+    public function cart(): HasMany
+    {
         return $this->hasMany(Cart::class);
     }
 
-    public function builds() {
+    public function builds(): HasMany
+    {
         return $this->hasMany(UserBuild::class);
     }
 
-    public function logs()
+    public function logs(): HasMany
     {
         return $this->hasMany(Log::class);
     }
@@ -57,19 +76,16 @@ class User extends Authenticatable
     {
         return $query->where('is_faker', 1);
     }
-    public function generateSlug()
+    public function generateSlug(): string
     {
-        $name = $this->name;
-        $surname = $this->surname;
-        if($name && $surname) {
-            $this->slug = Str::slug($name . '-' . $surname);
-        } else {
-            $this->slug = 'user-' . $this->id;
-        }
+        $slug = Str::slug($this->name . '-' . $this->surname);
+        $originalSlug = $slug;
         $i = 1;
-        while(static::where('slug', $this->slug)->where('id', '<>', $this->id)->exists()) {
-            $this->slug = Str::slug($name . '-' . $surname) . '-' . (++$i);
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $i++;
         }
-        $this->save();
+
+        return $slug;
     }
 }

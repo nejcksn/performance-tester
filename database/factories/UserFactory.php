@@ -24,22 +24,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->firstName();
-        $surname = fake()->lastName();
-
-        $userData = [
-            'name' => $name,
-            'surname' => $surname,
+        return [
+            'name' => fake()->firstName(),
+            'surname' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail() . mt_rand(1000, 9999),
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
             'is_faker' => 1,
         ];
-        $slug = strtolower($name . '-' . $surname);
-        $userData['slug'] = $slug;
-
-        return $userData;
     }
 
     public function unverified(): static
