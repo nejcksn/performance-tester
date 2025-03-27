@@ -1,6 +1,10 @@
-<footer class="d-flex justify-content-between py-4 my-4 bg-light">
+<footer class="d-flex justify-content-between pt-4 my-4 bg-light">
     <div class="px-2 px-md-4">
-        <p>&copy; {{ date('Y') }} {{ __('Eugene Ilchenko') }}</p>
+        <div>
+            &copy; {{ date('Y') }}
+            <br>
+            {{ __('Eugene Ilchenko') }}
+        </div>
     </div>
     <div class="px-2 px-md-4 social-links">
         <a href="{{ config('app.social.telegram') }}" target="_blank" class="me-2">

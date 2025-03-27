@@ -1,17 +1,15 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Admin Panel')
+
+@section('content_header')
+    <h1>Welcome to the Admin Panel</h1>
+@stop
 
 @section('content')
-    <div class="container">
-        <h1>Админская панель</h1>
-        <p>Привет, {{ auth()->user()->name }}!</p>
+    <p>This is the main page of the admin panel.</p>
+    @role('super_admin')
+    <p>You are a super admin.</p>
+    @endrole
+@stop
 
-        @role('super_admin')
-        <a href="#" class="btn btn-primary">Управление пользователями</a>
-        @endrole
-
-        @role('admin')
-        <a href="#" class="btn btn-success">Управление постами</a>
-        @endrole
-
-    </div>
-@endsection

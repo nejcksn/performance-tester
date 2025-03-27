@@ -10,11 +10,26 @@ class Brand extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description'];
+    protected $fillable = ['name', 'slug', 'description', 'country', 'founded_year', 'logo'];
 
     public function products()
     {
         return $this->hasMany(Product::class, 'brand_id');
+    }
+
+    public function getLogoAttribute(): string
+    {
+        $logoPath = 'storage/brands/' . $this->slug . '.png';
+        if (file_exists(storage_path('app/public/brands/' . $this->slug . '.png'))) {
+            return $logoPath;
+        }
+
+        $logoPath = 'storage/brands/' . $this->slug . '.svg';
+        if (file_exists(storage_path('app/public/brands/' . $this->slug . '.svg'))) {
+            return $logoPath;
+        }
+
+        return '';
     }
 
     public function generateSlug()

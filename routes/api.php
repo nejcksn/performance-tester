@@ -34,7 +34,7 @@ Route::apiResource('products', ProductController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('logs', LogController::class);
 Route::apiResource('test-cases', TestCaseController::class);
-Route::apiResource('test-results', TestResultController::class);
+Route::apiResource('test-test_results', TestResultController::class);
 
 Route::prefix('test')->group(function () {
     Route::post('/read', [PerformanceTestController::class, 'testRead']);

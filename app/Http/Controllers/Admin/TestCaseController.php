@@ -13,7 +13,7 @@ class TestCaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
         return response()->json(TestCase::all());
     }
@@ -21,7 +21,7 @@ class TestCaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) : JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -36,7 +36,7 @@ class TestCaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TestCase $testCase) : JsonResponse
+    public function show(TestCase $testCase): JsonResponse
     {
         return response()->json($testCase);
     }
@@ -44,7 +44,7 @@ class TestCaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TestCase $testCase) : JsonResponse
+    public function update(Request $request, TestCase $testCase): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -59,7 +59,7 @@ class TestCaseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TestCase $testCase) : JsonResponse
+    public function destroy(TestCase $testCase): JsonResponse
     {
         $testCase->delete();
         return response()->json(null, Response::HTTP_NO_CONTENT);

@@ -10,10 +10,15 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'category_id', 'price', 'image_url', 'is_faker'];
+    protected $fillable = ['name', 'slug', 'category_id', 'brand_id', 'price', 'image', 'is_faker'];
 
     public function category() {
         return $this->belongsTo(Category::class);
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
     }
 
     public function specs() {
@@ -25,11 +30,6 @@ class Product extends Model
         return $this->belongsToMany(Order::class, 'order_product')
                     ->withPivot('quantity')
                     ->withTimestamps();
-    }
-
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
     }
 
     public function scopeFaker($query)

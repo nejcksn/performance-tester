@@ -25,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::table('products', function (Blueprint $table) {
-            $table->boolean('img_url')->after('image')->default(0);
+            $table->boolean('is_faker')->after('image')->default(0);
         });
     }
 

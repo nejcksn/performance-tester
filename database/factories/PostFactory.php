@@ -21,7 +21,7 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id, // Генерация пользователя
+            'user_id' => User::where('is_faker', 1)->inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'title' => $this->faker->sentence(),
             'content' => $this->faker->paragraph(10),
             'is_faker' => 1,

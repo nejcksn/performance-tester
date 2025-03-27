@@ -5,73 +5,97 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index() : JsonResponse
+    public function index(Request $request)
     {
-        return response()->json(User::all());
-    }
+        $roles = Role::all();
+        $allowedRoles = ['all', 'admin']; // Разрешенные роли
+        $role = $request->query('role', 'all');
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) : JsonResponse
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        return response()->json($user, Response::HTTP_CREATED);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user) : JsonResponse
-    {
-        return response()->json($user);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user) : JsonResponse
-    {
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:6',
-        ]);
-
-        if (isset($validated['password'])) {
-            $validated['password'] = bcrypt($validated['password']);
+        if (!in_array($role, $allowedRoles)) {
+            return redirect()->route('admin.users.index'); // Если роль невалидная - редирект
         }
 
-        $user->update($validated);
+        $query = User::query();
 
-        return response()->json($user);
+        if ($role !== 'all') {
+            $query->whereHas('roles', function ($q) use ($role) {
+                if ($role === 'admin') {
+                    $q->whereIn('name', ['admin', 'super_admin']);
+                } else {
+                    $q->where('name', $role);
+                }
+            });
+        }
+
+        $users = $query->paginate(20);
+
+        return view('admin.users.index', compact('roles' ,'users'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user) : JsonResponse
+    public function search(Request $request)
     {
-        $user->delete();
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        $query = $request->input('q');
+
+        $users = User::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('surname', 'LIKE', "%{$query}%")
+            ->orWhere('email', 'LIKE', "%{$query}%")
+            ->select('id', 'name', 'surname', 'email')
+            ->get();
+
+        return response()->json($users);
     }
+    public function assignRole(Request $request): JsonResponse
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'role' => 'required|string|exists:roles,name'
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $role = $request->role;
+
+        if ($role === 'admin' && !auth()->user()->hasRole('super_admin')) {
+            return response()->json(['success' => false, 'message' => 'You do not have permission to assign this role.'], 403);
+        }
+
+        if (!$user->hasRole($role)) {
+            $user->assignRole($role);
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'User already has this role.']);
+    }
+
+    public function getUserRoles(User $user): JsonResponse
+    {
+        $roles = $user->roles->where('name', '!=', 'super_admin')->values();
+        return response()->json(['roles' => $roles]);
+    }
+
+    public function removeUserRole(User $user, $role): JsonResponse
+    {
+        if ($role === 'admin' && !Auth::user()->hasRole('super_admin')) {
+            return response()->json(['error' => 'Only super admins can remove Admin role'], 403);
+        }
+
+        $user->removeRole($role);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroy(User $user)
+    {
+        $fullName = "<b>" . e($user->name . ' ' . $user->surname) . "</b>";
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', "User $fullName has been deleted!");
+    }
+
 }

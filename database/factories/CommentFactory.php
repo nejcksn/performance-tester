@@ -22,8 +22,8 @@ class CommentFactory extends Factory
     public function definition()
     {
         return [
-            'post_id' => Post::inRandomOrder()->first()->id ?? Post::factory()->create()->id,
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
+            'post_id' => Post::where('is_faker', 1)->inRandomOrder()->first()?->id ?? Post::factory()->create()->id,
+            'user_id' => User::where('is_faker', 1)->inRandomOrder()->first()?->id ?? User::factory()->create()->id,
             'content' => $this->faker->paragraph(),
             'is_faker' => 1,
         ];

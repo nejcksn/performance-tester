@@ -1,0 +1,28 @@
+.select2-container .select2-selection {
+    border: 1px solid #ced4da !important;
+    border-radius: .25rem !important;
+    padding: .375rem .75rem !important;
+    min-height: calc(2.25rem + 2px) !important;
+}
+.select2-selection__clear {
+    font-size: 1.2rem;
+    color: red;
+    padding-right: 5px;
+}
+.select2-selection__clear:hover {
+    color: darkred;
+    cursor: pointer;
+}
+.chart-container {
+    width: 100%;
+    height: 60vh;
+    min-height: 350px;
+    max-height: 600px;
+    overflow-x: auto;
+    position: relative;
+}
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+

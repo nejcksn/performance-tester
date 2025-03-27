@@ -30,8 +30,12 @@
                             {{ __('Sign In') }}
                         </a>
                     @else
-{{--                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Личный кабинет</a>--}}
-                        Authorized
+                        @role('admin|super_admin')
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary me-2">
+                            <i class="fa-solid fa-user-shield"></i> Admin Panel
+                        </a>
+                        @endrole
+                        {{--                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Личный кабинет</a>--}}
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-primary">
