@@ -72,7 +72,7 @@ class PerformanceTestController extends Controller
 
         $testCase = TestCase::create([
             'name' => "Read test for {$validated['model']}s",
-            'description' => "Reading records from {$validated['model']}, {$validated['runs']} times",
+            'description' => "Reading {$validated['limit']} records from {$validated['model']}, {$validated['runs']} times",
         ]);
 
         $this->testService->runMultipleTests($testCase->id, function () use ($modelClass, $validated) {
