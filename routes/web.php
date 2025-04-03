@@ -66,6 +66,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', [PerformanceTestController::class, 'index'])->name('index');
         Route::post('/create', [PerformanceTestController::class, 'testCreate'])->name('create');
         Route::post('/read', [PerformanceTestController::class, 'testRead'])->name('read');
+        Route::post('/read_chunk', [PerformanceTestController::class, 'testReadChunk'])->name('read_chunk');
+        Route::post('/read_cursor', [PerformanceTestController::class, 'testReadCursor'])->name('read_cursor');
+        Route::post('/read_cache', [PerformanceTestController::class, 'testReadCache'])->name('read_cache');
         Route::post('/update', [PerformanceTestController::class, 'testUpdate'])->name('update');
         Route::post('/delete', [PerformanceTestController::class, 'testDelete'])->name('delete');
     });

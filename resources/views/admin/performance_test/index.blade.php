@@ -25,6 +25,9 @@
                 <option value=""></option>
                 <option value="create">Create</option>
                 <option value="read">Read</option>
+                <option value="read_chunk">Read with Chunk</option>
+                <option value="read_cursor">Read with Cursor</option>
+                <option value="cache">Read with Cache</option>
                 <option value="update">Update</option>
                 <option value="delete">Delete</option>
             </select>
@@ -43,17 +46,23 @@
         <button type="submit" class="btn btn-primary">Run Test</button>
     </form>
 @stop
+
 @section('js')
     <script>
         document.getElementById('type').addEventListener('change', function() {
             var form = document.getElementById('testForm');
             var testType = this.value;
 
-            // действие формы в зависимости от типа теста
             if (testType === 'create') {
                 form.action = "{{ route('admin.performance_test.create') }}";
             } else if (testType === 'read') {
                 form.action = "{{ route('admin.performance_test.read') }}";
+            } else if (testType === 'read_chunk') {
+                form.action = "{{ route('admin.performance_test.read_chunk') }}";
+            } else if (testType === 'read_cursor') {
+                form.action = "{{ route('admin.performance_test.read_cursor') }}";
+            } else if (testType === 'cache') {
+                form.action = "{{ route('admin.performance_test.read_cache') }}";
             } else if (testType === 'update') {
                 form.action = "{{ route('admin.performance_test.update') }}";
             } else if (testType === 'delete') {

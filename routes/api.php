@@ -38,6 +38,9 @@ Route::apiResource('test-test_results', TestResultController::class);
 
 Route::prefix('test')->group(function () {
     Route::post('/read', [PerformanceTestController::class, 'testRead']);
+    Route::post('/read_chunk', [PerformanceTestController::class, 'testReadChunk']);
+    Route::post('/read_cursor', [PerformanceTestController::class, 'testReadCursor']);
+    Route::post('/read_cache', [PerformanceTestController::class, 'testReadCache']);
     Route::post('/create', [PerformanceTestController::class, 'testCreate']);
     Route::post('/update', [PerformanceTestController::class, 'testUpdate']);
     Route::post('/delete', [PerformanceTestController::class, 'testDelete']);

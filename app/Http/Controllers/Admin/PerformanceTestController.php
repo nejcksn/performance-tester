@@ -10,6 +10,7 @@ use App\Services\PerformanceTestService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class PerformanceTestController extends Controller
 {
@@ -71,8 +72,8 @@ class PerformanceTestController extends Controller
         [$modelClass, $validated] = $this->getValidatedModel($request);
 
         $testCase = TestCase::create([
-            'name' => "Read test for {$validated['model']}s",
-            'description' => "Reading {$validated['limit']} records from {$validated['model']}, {$validated['runs']} times",
+            'name' => "Select test for {$validated['model']}s",
+            'description' => "Selecting {$validated['limit']} records from {$validated['model']}, {$validated['runs']} times",
         ]);
 
         $this->testService->runMultipleTests($testCase->id, function () use ($modelClass, $validated) {
@@ -82,7 +83,70 @@ class PerformanceTestController extends Controller
                 $query->limit($validated['limit']);
             }
 
-            return $query->get();
+            return $query->get();  // Обычный select
+        }, $modelClass, $validated['runs']);
+
+        $testResults = TestResult::where('test_case_id', $testCase->id)->first();
+
+        return redirect()->route('admin.test_results.show', ['testCase' => $testCase, 'testResults' => $testResults]);
+    }
+
+    public function testReadChunk(Request $request): RedirectResponse
+    {
+        [$modelClass, $validated] = $this->getValidatedModel($request);
+
+        $testCase = TestCase::create([
+            'name' => "Chunk test for {$validated['model']}s",
+            'description' => "Chunking {$validated['limit']} records from {$validated['model']}, {$validated['runs']} times",
+        ]);
+
+        $this->testService->runMultipleTests($testCase->id, function () use ($modelClass, $validated) {
+            $modelClass::chunk(100, function ($items) {
+                // Обрабатываем chunk, в данном случае просто проходим по записям
+                foreach ($items as $item) {
+                    // Можно добавить дополнительную логику обработки
+                }
+            });
+        }, $modelClass, $validated['runs']);
+
+        $testResults = TestResult::where('test_case_id', $testCase->id)->first();
+
+        return redirect()->route('admin.test_results.show', ['testCase' => $testCase, 'testResults' => $testResults]);
+    }
+
+    public function testReadCursor(Request $request): RedirectResponse
+    {
+        [$modelClass, $validated] = $this->getValidatedModel($request);
+
+        $testCase = TestCase::create([
+            'name' => "Cursor test for {$validated['model']}s",
+            'description' => "Using cursor for {$validated['limit']} reading records from {$validated['model']}, {$validated['runs']} times",
+        ]);
+
+        $this->testService->runMultipleTests($testCase->id, function () use ($modelClass, $validated) {
+            foreach ($modelClass::cursor() as $item) {
+                // Обрабатываем каждую запись по очереди
+            }
+        }, $modelClass, $validated['runs']);
+
+        $testResults = TestResult::where('test_case_id', $testCase->id)->first();
+
+        return redirect()->route('admin.test_results.show', ['testCase' => $testCase, 'testResults' => $testResults]);
+    }
+
+    public function testReadCache(Request $request): RedirectResponse
+    {
+        [$modelClass, $validated] = $this->getValidatedModel($request);
+
+        $testCase = TestCase::create([
+            'name' => "Cache test for {$validated['model']}s",
+            'description' => "Using cache to read {$validated['limit']} records from {$validated['model']}, {$validated['runs']} times",
+        ]);
+
+        $this->testService->runMultipleTests($testCase->id, function () use ($modelClass, $validated) {
+            Cache::remember("test_cache_{$validated['model']}", 300, function () use ($modelClass, $validated) {
+                return $modelClass::limit($validated['limit'])->get();
+            });
         }, $modelClass, $validated['runs']);
 
         $testResults = TestResult::where('test_case_id', $testCase->id)->first();
