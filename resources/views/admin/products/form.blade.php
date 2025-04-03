@@ -76,65 +76,86 @@
     </div>
 @endsection
 @push('js')
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let categorySelect = document.getElementById('category_id');
-            let container = document.getElementById('fields-container');
+   <script>
+       document.addEventListener("DOMContentLoaded", function () {
+           let categorySelect = document.getElementById('category_id');
+           let container = document.getElementById('fields-container');
 
-            categorySelect.addEventListener('change', function () {
-                let categoryId = this.value;
-                console.log("Выбрана категория:", categoryId); // Проверяем
+           $('#category_id').on('select2:select', function (e) {
+               let categoryId = $(this).val();
+               console.log("Выбрана категория через Select2:", categoryId); // Проверяем
 
-                container.innerHTML = '';
+               container.innerHTML = '';
 
-                if (categoryId) {
-                    fetch(`/admin/products/category-fields/${categoryId}`)
-                        .then(response => response.json())
-                        .then(fields => {
-                            console.log("Загруженные поля:", fields); // Проверяем
+               if (categoryId) {
+                   fetch(`/api/category-fields/${categoryId}`)
+                       .then(response => response.json())
+                       .then(fields => {
+                           console.log("Загруженные поля:", fields); // Проверяем
 
-                            fields.forEach(field => {
-                                let formGroup = document.createElement('div');
-                                formGroup.classList.add('form-group');
+                           if (fields.length > 0) {
+                               let collapseButton = document.createElement('button');
+                               collapseButton.className = 'btn btn-primary mb-2';
+                               collapseButton.setAttribute('type', 'button');
+                               collapseButton.setAttribute('id', 'toggleFields'); // Устанавливаем ID
+                               collapseButton.textContent = 'Показать характеристики';
+                               container.appendChild(collapseButton);
 
-                                let label = document.createElement('label');
-                                label.textContent = field.label;
-                                label.setAttribute('for', field.name);
-                                formGroup.appendChild(label);
+                               let collapseDiv = document.createElement('div');
+                               collapseDiv.className = 'collapse';
+                               collapseDiv.id = 'categoryFieldsCollapse';
+                               container.appendChild(collapseDiv);
 
-                                let input;
-                                if (field.type === 'checkbox') {
-                                    input = document.createElement('input');
-                                    input.type = 'checkbox';
-                                    input.className = 'form-check-input';
-                                } else if (field.type === 'textarea') {
-                                    input = document.createElement('textarea');
-                                    input.className = 'form-control';
-                                } else {
-                                    input = document.createElement('input');
-                                    input.type = field.type;
-                                    input.className = 'form-control';
-                                }
+                               fields.forEach(field => {
+                                   let formGroup = document.createElement('div');
+                                   formGroup.classList.add('form-group', 'mb-2');
 
-                                input.name = field.name;
-                                input.id = field.name;
-                                formGroup.appendChild(input);
-                                container.appendChild(formGroup);
-                            });
-                        })
-                        .catch(error => console.error("Ошибка запроса:", error));
-                }
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#category_id, #brand_id').select2({
-                width: '100%',
-                placeholder: "Select an option",
-                theme: 'bootstrap-4',
-                allowClear: true
-            });
-        });
-    </script>
+                                   let label = document.createElement('label');
+                                   label.textContent = field.label;
+                                   label.setAttribute('for', field.name);
+                                   formGroup.appendChild(label);
+
+                                   let input;
+                                   if (field.type === 'checkbox') {
+                                       input = document.createElement('input');
+                                       input.type = 'checkbox';
+                                       input.className = 'form-check-input';
+                                   } else if (field.type === 'textarea') {
+                                       input = document.createElement('textarea');
+                                       input.className = 'form-control';
+                                   } else {
+                                       input = document.createElement('input');
+                                       input.type = field.type;
+                                       input.className = 'form-control';
+                                   }
+
+                                   input.name = field.name;
+                                   input.id = field.name;
+                                   formGroup.appendChild(input);
+                                   collapseDiv.appendChild(formGroup);
+                               });
+
+                               // Добавляем обработчик клика
+                               document.getElementById('toggleFields').addEventListener('click', function () {
+                                   let collapseEl = document.getElementById('categoryFieldsCollapse');
+                                   let bsCollapse = new bootstrap.Collapse(collapseEl, {
+                                       toggle: true
+                                   });
+                               });
+                           }
+                       })
+                       .catch(error => console.error("Ошибка запроса:", error));
+               }
+           });
+
+           $(document).ready(function () {
+               $('#category_id, #brand_id').select2({
+                   width: '100%',
+                   placeholder: "Select an option",
+                   theme: 'bootstrap-4',
+                   allowClear: true
+               });
+           });
+       });
+   </script>
 @endpush
