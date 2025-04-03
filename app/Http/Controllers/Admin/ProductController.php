@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\CategoryField;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['category', 'brand'])->paginate(50);
+        $products = Product::with(['category', 'brand'])->orderByDesc('id')->paginate(50);
 
         return view('admin.products.index', compact('products'));
     }
@@ -27,6 +28,12 @@ class ProductController extends Controller
         $categories = Category::all();
         $brands = Brand::all();
         return view('admin.products.form', compact('categories', 'brands'));
+    }
+
+    public function getCategoryFields($categoryId)
+    {
+        $fields = CategoryField::where('category_id', $categoryId)->get();
+        return response()->json($fields);
     }
 
     public function store(Request $request): RedirectResponse

@@ -42,4 +42,4 @@ Route::prefix('test')->group(function () {
     Route::post('/update', [PerformanceTestController::class, 'testUpdate']);
     Route::post('/delete', [PerformanceTestController::class, 'testDelete']);
 });
-
+Route::get('/category-fields/{categoryId}', [ProductController::class, 'getCategoryFields']);

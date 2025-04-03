@@ -33,7 +33,7 @@
                     @foreach($categories as $category)
                         <tr>
                             <td>{{ $category->name }}</td>
-                            <td>{{ $category->products->count() }}</td>
+                            <td>{{ $category->products_count }}</td>
                             <td>
                                 <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-edit"></i> Edit

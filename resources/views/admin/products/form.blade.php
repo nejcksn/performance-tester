@@ -27,6 +27,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="brand_id">Brand</label>
+                    <select name="brand_id" id="brand_id" class="form-control">
+                        <option value="">Select Brand</option>
+                        @foreach($brands as $brand)
+                            <option value="{{ $brand->id }}"
+                                {{ isset($product) && $product->brand_id == $brand->id ? 'selected' : '' }}>
+                                {{ $brand->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="category_id">Category</label>
                     <select name="category_id" id="category_id" class="form-control" required>
                         <option value="">Select Category</option>
@@ -39,18 +52,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="brand_id">Brand</label>
-                    <select name="brand_id" id="brand_id" class="form-control">
-                        <option value="">Select Brand</option>
-                        @foreach($brands as $brand)
-                            <option value="{{ $brand->id }}"
-                                {{ isset($product) && $product->brand_id == $brand->id ? 'selected' : '' }}>
-                                {{ $brand->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <div id="fields-container"></div>
 
                 <div class="form-group">
                     <label for="price">Price ($)</label>
@@ -72,8 +74,59 @@
             </form>
         </div>
     </div>
-@stop
+@endsection
 @push('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let categorySelect = document.getElementById('category_id');
+            let container = document.getElementById('fields-container');
+
+            categorySelect.addEventListener('change', function () {
+                let categoryId = this.value;
+                console.log("Выбрана категория:", categoryId); // Проверяем
+
+                container.innerHTML = '';
+
+                if (categoryId) {
+                    fetch(`/admin/products/category-fields/${categoryId}`)
+                        .then(response => response.json())
+                        .then(fields => {
+                            console.log("Загруженные поля:", fields); // Проверяем
+
+                            fields.forEach(field => {
+                                let formGroup = document.createElement('div');
+                                formGroup.classList.add('form-group');
+
+                                let label = document.createElement('label');
+                                label.textContent = field.label;
+                                label.setAttribute('for', field.name);
+                                formGroup.appendChild(label);
+
+                                let input;
+                                if (field.type === 'checkbox') {
+                                    input = document.createElement('input');
+                                    input.type = 'checkbox';
+                                    input.className = 'form-check-input';
+                                } else if (field.type === 'textarea') {
+                                    input = document.createElement('textarea');
+                                    input.className = 'form-control';
+                                } else {
+                                    input = document.createElement('input');
+                                    input.type = field.type;
+                                    input.className = 'form-control';
+                                }
+
+                                input.name = field.name;
+                                input.id = field.name;
+                                formGroup.appendChild(input);
+                                container.appendChild(formGroup);
+                            });
+                        })
+                        .catch(error => console.error("Ошибка запроса:", error));
+                }
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('#category_id, #brand_id').select2({
