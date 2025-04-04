@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>Admin Panel</b>',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -338,18 +338,21 @@ return [
         ],
         [
             'text' => 'Orders',
-            'route' => 'admin.orders.index',
+//            'route' => 'admin.orders.index',
             'icon'  => 'fas fa-shopping-cart',
+            'class' => 'disabled',
         ],
         [
             'text' => 'Compatibility Rules',
-            'route' => 'admin.compatibility.index',
+//            'route' => 'admin.compatibility.index',
             'icon'  => 'fas fa-random',
+            'class' => 'disabled',
         ],
         [
             'text' => 'Posts',
-            'route' => 'admin.posts.index',
+//            'route' => 'admin.posts.index',
             'icon'  => 'fas fa-pen',
+            'class' => 'disabled',
         ],
 
         // Заголовок "Performance Test"
