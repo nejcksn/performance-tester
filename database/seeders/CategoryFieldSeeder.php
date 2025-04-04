@@ -88,7 +88,7 @@ class CategoryFieldSeeder extends Seeder
                 ['name' => 'noise_level_dB', 'label' => 'Noise Level (dB)', 'type' => 'number'],
                 ['name' => 'color', 'label' => 'Color', 'type' => 'text'],
             ],
-            'Storage' => [
+            'Storage (HDD/SSD)' => [
                 ['name' => 'capacity', 'label' => 'Capacity (GB)', 'type' => 'number'],
                 ['name' => 'price_per_gb', 'label' => 'Price per GB ($)', 'type' => 'number'],
                 ['name' => 'type', 'label' => 'Type', 'type' => 'text'],
@@ -101,7 +101,7 @@ class CategoryFieldSeeder extends Seeder
                 ['name' => 'sequential_read', 'label' => 'Sequential Read (MB/s)', 'type' => 'number'],
                 ['name' => 'sequential_write', 'label' => 'Sequential Write (MB/s)', 'type' => 'number'],
             ],
-            'Memory' => [
+            'Memory (RAM)' => [
                 ['name' => 'speed', 'label' => 'Speed (MHz)', 'type' => 'number'],
                 ['name' => 'type', 'label' => 'Type', 'type' => 'text'],
                 ['name' => 'voltage', 'label' => 'Voltage (V)', 'type' => 'number'],
@@ -129,7 +129,7 @@ class CategoryFieldSeeder extends Seeder
                 ['name' => 'ethernet', 'label' => 'Ethernet', 'type' => 'text'],
                 ['name' => 'audio_chip', 'label' => 'Audio Chip', 'type' => 'text'],
             ],
-            'Power Supply' => [
+            'Power Supply (PSU)' => [
                 ['name' => 'wattage', 'label' => 'Wattage (W)', 'type' => 'number'],
                 ['name' => 'efficiency', 'label' => 'Efficiency', 'type' => 'text'],
                 ['name' => 'modular', 'label' => 'Modular', 'type' => 'checkbox'],
