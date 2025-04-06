@@ -12,8 +12,7 @@ class InternalHardDriveSeeder extends Seeder
 {
     public function run()
     {
-        // Название файла и соответствие категории
-        $filename = 'internal-hard-drive-paste';
+        $filename = 'internal-hard-drive';
         $categoryName = config('categories')[$filename] ?? null;
 
         if (!$categoryName) {
@@ -21,14 +20,12 @@ class InternalHardDriveSeeder extends Seeder
             return;
         }
 
-        // Получаем категорию
         $category = Category::where('name', $categoryName)->first();
         if (!$category) {
             $this->command->error("Категория '{$categoryName}' не найдена в базе данных");
             return;
         }
 
-        // Путь к файлу
         $filePath = storage_path("app/json/{$filename}.json");
 
         if (!file_exists($filePath)) {
@@ -36,7 +33,6 @@ class InternalHardDriveSeeder extends Seeder
             return;
         }
 
-        // Загружаем продукты
         $products = json_decode(file_get_contents($filePath), true);
 
         if (!is_array($products)) {
@@ -44,47 +40,44 @@ class InternalHardDriveSeeder extends Seeder
             return;
         }
 
-        // Пример: берём только первый продукт (без foreach)
-        $item = $products[0] ?? null;
+        // 🔁 Перебор всех товаров в JSON
+        foreach ($products as $item) {
+            if (empty($item['name'])) {
+                continue;
+            }
 
-        if (!$item || empty($item['name'])) {
-            $this->command->error("Нет данных о продукте или отсутствует имя");
-            return;
+            $brand = null;
+            if (!empty($item['brand'])) {
+                $brand = Brand::where('name', $item['brand'])->first();
+            }
+
+            $product = Product::updateOrCreate(
+                ['name' => $item['name']],
+                [
+                    'category_id' => $category->id,
+                    'brand_id' => $brand?->id,
+                    'price' => $item['price'] ?? rand(50, 500),
+                ]
+            );
+
+            $product->generateSlug();
+
+            collect($item)
+                ->except(['id', 'name', 'price', 'brand'])
+                ->filter()
+                ->each(function ($value, $key) use ($product) {
+                    ProductSpec::updateOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'spec_key' => $key
+                        ],
+                        [
+                            'spec_value' => json_encode($value),
+                        ]
+                    );
+                });
         }
 
-        // Получаем бренд, если есть
-        $brand = null;
-        if (!empty($item['brand'])) {
-            $brand = Brand::where('name', $item['brand'])->first();
-        }
-
-        // Создание/обновление продукта
-        $product = Product::updateOrCreate(
-            ['name' => $item['name']],
-            [
-                'category_id' => $category->id,
-                'brand_id' => $brand?->id,
-                'price' => $item['price'] ?? rand(50, 500),
-            ]
-        );
-
-        // Генерация slug
-        $product->generateSlug();
-
-        // Добавление характеристик
-        collect($item)
-            ->except(['id', 'name', 'price', 'brand'])
-            ->filter()
-            ->each(function ($value, $key) use ($product) {
-                ProductSpec::updateOrCreate(
-                    [
-                        'product_id' => $product->id,
-                        'spec_key' => $key
-                    ],
-                    [
-                        'spec_value' => json_encode($value),
-                    ]
-                );
-            });
+        $this->command->info("Загружено продуктов: " . count($products));
     }
 }
