@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\ProductSpec;
 use Illuminate\Database\Seeder;
 
-class MemomySeeder extends Seeder
+class MemorySeeder extends Seeder
 {
     public function run()
     {
